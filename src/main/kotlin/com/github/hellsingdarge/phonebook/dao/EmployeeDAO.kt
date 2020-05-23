@@ -91,4 +91,79 @@ class EmployeeDAO
             }
         }
     }
+
+    fun changeName(newName: String)
+    {
+        val query = "UPDATE Employees SET name = ?"
+
+        connectionPool.connection.use { connection ->
+            val statement = connection.prepareStatement(query)
+
+            statement.setString(1, newName)
+
+            statement.use {
+                it.executeUpdate()
+            }
+        }
+    }
+
+    fun changeDepartment(newDepartment: String)
+    {
+        val query = "UPDATE Employees SET department = ?"
+
+        connectionPool.connection.use { connection ->
+            val statement = connection.prepareStatement(query)
+
+            statement.setString(1, newDepartment)
+
+            statement.use {
+                it.executeUpdate()
+            }
+        }
+    }
+
+    fun changeInternalPhone(newPhone: String)
+    {
+        val query = "UPDATE Employees SET internalPhone = ?"
+
+        connectionPool.connection.use { connection ->
+            val statement = connection.prepareStatement(query)
+
+            statement.setString(1, newPhone)
+
+            statement.use {
+                it.executeUpdate()
+            }
+        }
+    }
+
+    fun changeExternalPhone(newPhone: String)
+    {
+        val query = "UPDATE Employees SET internalPhone = ?"
+
+        connectionPool.connection.use { connection ->
+            val statement = connection.prepareStatement(query)
+
+            statement.setString(1, newPhone)
+
+            statement.use {
+                it.executeUpdate()
+            }
+        }
+    }
+
+    fun changeHomePhone(newPhone: String)
+    {
+        val query = "UPDATE Employees SET homePhone = ?"
+
+        connectionPool.connection.use { connection ->
+            val statement = connection.prepareStatement(query)
+
+            statement.setString(1, newPhone)
+
+            statement.use {
+                it.executeUpdate()
+            }
+        }
+    }
 }

@@ -6,6 +6,7 @@ import com.github.hellsingdarge.phonebook.service.DepartmentsService
 import com.github.hellsingdarge.phonebook.service.EmployeeService
 import com.google.inject.Injector
 import kotlinx.cli.*
+import org.h2.mvstore.tx.TransactionStore
 
 @ExperimentalCli
 class ArgHandler(args: Array<String>, private val injector: Injector)
@@ -123,12 +124,41 @@ class ArgHandler(args: Array<String>, private val injector: Injector)
         }
     }
 
+    inner class ChangeEmployeeInfo : Subcommand("changeEmployeeInfo", "Change name or phone number of employee/department")
+    {
+        val employeeName: String by argument(
+                ArgType.String,
+                fullName = "name",
+                description = "Name of employee whose info to change"
+        )
+
+        val whatToChange: String by argument(
+                ArgType.Choice(listOf("name", "department", "internalPhone", "externalPhone", "homePhone")),
+                fullName = "whatToChange",
+                description = "What to change"
+        )
+
+        val newValue: String by argument(
+                ArgType.String,
+                fullName = "newValue",
+                description = "New valuew for phone number or name"
+        )
+
+        override fun execute()
+        {
+            val employeeDAO = injector.getInstance(EmployeeDAO::class.java)
+            val employeeService = EmployeeService(employeeDAO)
+            employeeService.change(whatToChange, newValue)
+        }
+    }
+
     init
     {
         val addEmployee = AddEmployee()
         val addDepartment = AddDepartment()
+        val changeEmployeeInfo = ChangeEmployeeInfo()
         val find = Find()
-        parser.subcommands(addEmployee, addDepartment, find)
+        parser.subcommands(addEmployee, addDepartment, changeEmployeeInfo, find)
         parser.parse(args)
     }
 }
