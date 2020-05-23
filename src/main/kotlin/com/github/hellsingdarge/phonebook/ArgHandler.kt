@@ -2,6 +2,8 @@ package com.github.hellsingdarge.phonebook
 
 import com.github.hellsingdarge.phonebook.dao.DepartmentDAO
 import com.github.hellsingdarge.phonebook.dao.EmployeeDAO
+import com.github.hellsingdarge.phonebook.service.DepartmentsService
+import com.github.hellsingdarge.phonebook.service.EmployeeService
 import com.google.inject.Injector
 import kotlinx.cli.*
 
@@ -60,16 +62,8 @@ class ArgHandler(args: Array<String>, private val injector: Injector)
         override fun execute()
         {
             val employeeDAO = injector.getInstance(EmployeeDAO::class.java)
-
-            if (employeeDAO.addEmployee(employeeName, department, internalNumber, externalNumber, homeNumber))
-            {
-                println("Successfuly added empployee $employeeName")
-            }
-            else
-            {
-                println("Mayn't add employee that already exists")
-                kotlin.system.exitProcess(1);
-            }
+            val employeeService = EmployeeService(employeeDAO)
+            employeeService.addEmployee(employeeName, department, internalNumber, externalNumber, homeNumber)
         }
     }
 
@@ -115,33 +109,15 @@ class ArgHandler(args: Array<String>, private val injector: Injector)
                 "employee" ->
                 {
                     val employeeDAO = injector.getInstance(EmployeeDAO::class.java)
-                    val employees = employeeDAO.findEmployeeByPhoneNumber(phoneNumber)
-
-                    if (employees.isEmpty())
-                    {
-                        println("No employees found with this phone number: $phoneNumber")
-                    }
-                    else
-                    {
-                        employees.forEach {
-                            println(it.fancyPrint())
-                        }
-                    }
+                    val employeeService = EmployeeService(employeeDAO)
+                    employeeService.findEmployeeByPhoneNumber(phoneNumber)
                 }
 
                 "department" ->
                 {
                     val departmentDAO = injector.getInstance(DepartmentDAO::class.java)
-                    val department = departmentDAO.findDepartmentByPhoneNumber(phoneNumber)
-
-                    if (department == null)
-                    {
-                        println("No department found with this phone number: $phoneNumber")
-                    }
-                    else
-                    {
-                        println(department.fancyPrint())
-                    }
+                    val departmentsService = DepartmentsService(departmentDAO)
+                    departmentsService.findDepartmentByPhoneNumber(phoneNumber)
                 }
             }
         }

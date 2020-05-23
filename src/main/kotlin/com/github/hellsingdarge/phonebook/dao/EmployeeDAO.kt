@@ -3,7 +3,6 @@ package com.github.hellsingdarge.phonebook.dao
 import com.github.hellsingdarge.phonebook.Department
 import com.github.hellsingdarge.phonebook.Employee
 import com.google.inject.Inject
-import java.sql.SQLIntegrityConstraintViolationException
 import javax.sql.DataSource
 
 class EmployeeDAO
@@ -74,31 +73,22 @@ class EmployeeDAO
         return employees.toList()
     }
 
-    fun addEmployee(name: String, departmentName: String, internalNumber: String?, externalNumber: String?, homeNumber: String?): Boolean
+    fun addEmployee(name: String, departmentName: String, internalNumber: String?, externalNumber: String?, homeNumber: String?)
     {
         val query = "INSERT INTO Employees VALUES(?, ?, ?, ?, ?)"
 
-        try
-        {
-            connectionPool.connection.use { connection ->
-                val statement = connection.prepareStatement(query)
+        connectionPool.connection.use { connection ->
+            val statement = connection.prepareStatement(query)
 
-                statement.setString(1, name)
-                statement.setString(2, departmentName)
-                statement.setString(3, externalNumber)
-                statement.setString(4, internalNumber)
-                statement.setString(5, homeNumber)
+            statement.setString(1, name)
+            statement.setString(2, departmentName)
+            statement.setString(3, externalNumber)
+            statement.setString(4, internalNumber)
+            statement.setString(5, homeNumber)
 
-                statement.use {
-                    it.executeUpdate()
-                }
+            statement.use {
+                it.executeUpdate()
             }
-
-            return true
-        }
-        catch (eg: SQLIntegrityConstraintViolationException)
-        {
-            return false
         }
     }
 }
