@@ -74,4 +74,36 @@ class DepartmentDAO
             }
         }
     }
+
+    fun changeName(oldName: String, newName: String)
+    {
+        val query = "UPDATE Departments SET name = ? WHERE name = ?"
+
+        connectionPool.connection.use { connection ->
+            val statement = connection.prepareStatement(query)
+
+            statement.setString(1, newName)
+            statement.setString(2, oldName)
+
+            statement.use {
+                it.executeUpdate()
+            }
+        }
+    }
+
+    fun changePhoneNumber(department: String, newPhoneNumber: String)
+    {
+        val query = "UPDATE Departments SET phoneNumber = ? WHERE name = ?"
+
+        connectionPool.connection.use { connection ->
+            val statement = connection.prepareStatement(query)
+
+            statement.setString(1, department)
+            statement.setString(2, newPhoneNumber)
+
+            statement.use {
+                it.executeUpdate()
+            }
+        }
+    }
 }

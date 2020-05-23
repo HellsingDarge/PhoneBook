@@ -11,5 +11,5 @@ CREATE TABLE Employees(
     internalNumber char(3),
     homeNumber varchar(16),
     PRIMARY KEY (name),
-    FOREIGN KEY (department) REFERENCES Departments(name)
+    FOREIGN KEY (department) REFERENCES Departments(name) ON UPDATE CASCADE
 );

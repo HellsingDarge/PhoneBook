@@ -2,7 +2,7 @@ package com.github.hellsingdarge.phonebook.service
 
 import com.github.hellsingdarge.phonebook.dao.DepartmentDAO
 
-class DepartmentsService(private val departmentDAO: DepartmentDAO)
+class DepartmentService(private val departmentDAO: DepartmentDAO)
 {
     fun findDepartmentByPhoneNumber(phoneNumber: String)
     {
@@ -15,6 +15,15 @@ class DepartmentsService(private val departmentDAO: DepartmentDAO)
         else
         {
             println(department.fancyPrint())
+        }
+    }
+
+    fun change(whatToChange: String, oldValue: String, newValue: String)
+    {
+        when (whatToChange)
+        {
+            "name" -> departmentDAO.changeName(oldValue, newValue)
+            "phoneNumber" -> departmentDAO.changePhoneNumber(oldValue, newValue)
         }
     }
 }

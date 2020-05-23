@@ -2,7 +2,7 @@ package com.github.hellsingdarge.phonebook
 
 import com.github.hellsingdarge.phonebook.dao.DepartmentDAO
 import com.github.hellsingdarge.phonebook.dao.EmployeeDAO
-import com.github.hellsingdarge.phonebook.service.DepartmentsService
+import com.github.hellsingdarge.phonebook.service.DepartmentService
 import com.github.hellsingdarge.phonebook.service.EmployeeService
 import com.google.inject.Injector
 import kotlinx.cli.*
@@ -117,7 +117,7 @@ class ArgHandler(args: Array<String>, private val injector: Injector)
                 "department" ->
                 {
                     val departmentDAO = injector.getInstance(DepartmentDAO::class.java)
-                    val departmentsService = DepartmentsService(departmentDAO)
+                    val departmentsService = DepartmentService(departmentDAO)
                     departmentsService.findDepartmentByPhoneNumber(phoneNumber)
                 }
             }
@@ -152,13 +152,53 @@ class ArgHandler(args: Array<String>, private val injector: Injector)
         }
     }
 
+    inner class ChangeDepartmentInfo : Subcommand("changeDepartmentInfo", "Change name or phone number of a department")
+    {
+        val target: String by argument(
+                ArgType.Choice(listOf("name", "phoneNumber")),
+                fullName = "target",
+                description = "What to change"
+        )
+
+        val oldValue: String by argument(
+                ArgType.String,
+                fullName = "oldValue",
+                description = "Either old name of department or department's name to change phone number of"
+        )
+
+        val newValue: String by argument(
+                ArgType.String,
+                fullName = "newValue",
+                description = """
+                            | New valuew of name or phone number.
+                            | NOTE: changing name changes info of all affected employees
+                            | NOTE: DELETING DEPARTMENT ISN'T POSSIBLE
+                            |""".trimMargin()
+        )
+
+        override fun execute()
+        {
+            val departmentDAO = injector.getInstance(DepartmentDAO::class.java)
+            val departmentsService = DepartmentService(departmentDAO)
+            departmentsService.change(target, oldValue, newValue)
+        }
+    }
+
     init
     {
         val addEmployee = AddEmployee()
         val addDepartment = AddDepartment()
         val changeEmployeeInfo = ChangeEmployeeInfo()
+        val changeDepartmentInfo = ChangeDepartmentInfo()
         val find = Find()
-        parser.subcommands(addEmployee, addDepartment, changeEmployeeInfo, find)
+
+        parser.subcommands(
+                addEmployee,
+                addDepartment,
+                changeEmployeeInfo,
+                changeDepartmentInfo,
+                find
+        )
         parser.parse(args)
     }
 }
