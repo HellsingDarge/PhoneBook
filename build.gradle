@@ -1,6 +1,8 @@
 buildscript {
     ext.kotlin_version = "1.3.72"
     ext.kotlinxcli_version = "0.2.1"
+    ext.h2_version = "1.4.200"
+    ext.flyway_verion = "6.4.1"
 }
 
 plugins {
@@ -18,6 +20,8 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation("org.jetbrains.kotlinx:kotlinx-cli:$kotlinxcli_version")
+    implementation("com.h2database:h2:$h2_version")
+    implementation("org.flywaydb:flyway-core:$flyway_verion")
 }
 
 compileKotlin {
