@@ -1,5 +1,8 @@
 package com.github.hellsingdarge.phonebook
 
+import kotlinx.cli.ExperimentalCli
+
+@ExperimentalCli
 fun main(args: Array<String>)
 {
     val argHandler = ArgHandler(args)
