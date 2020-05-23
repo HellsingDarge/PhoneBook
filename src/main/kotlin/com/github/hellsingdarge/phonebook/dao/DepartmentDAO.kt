@@ -58,4 +58,20 @@ class DepartmentDAO
 
         return department
     }
+
+    fun addDepartment(name: String, phoneNumber: String?)
+    {
+        val query = "INSERT INTO Departments VALUES(?, ?)"
+
+        connectionPool.connection.use { connection ->
+            val statement = connection.prepareStatement(query)
+
+            statement.setString(1, name)
+            statement.setString(2, phoneNumber)
+
+            statement.use {
+                it.executeUpdate()
+            }
+        }
+    }
 }

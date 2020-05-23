@@ -73,6 +73,27 @@ class ArgHandler(args: Array<String>, private val injector: Injector)
         }
     }
 
+    inner class AddDepartment : Subcommand("addDepartment", "Add department with specified name and optionally phone number")
+    {
+        val departmentName: String by argument(
+                ArgType.String,
+                fullName = "name",
+                description = "Name of a department to add"
+        )
+
+        val phoneNumber: String? by argument(
+                ArgType.String,
+                fullName = "phoneNumber",
+                description = "Phone number of a department"
+        ).optional()
+
+        override fun execute()
+        {
+            val departmentDAO = injector.getInstance(DepartmentDAO::class.java)
+            departmentDAO.addDepartment(departmentName, phoneNumber)
+        }
+    }
+
     inner class Find : Subcommand("find", "find employee/department by phone number")
     {
         val target: String by argument(
@@ -129,8 +150,9 @@ class ArgHandler(args: Array<String>, private val injector: Injector)
     init
     {
         val addEmployee = AddEmployee()
+        val addDepartment = AddDepartment()
         val find = Find()
-        parser.subcommands(addEmployee, find)
+        parser.subcommands(addEmployee, addDepartment, find)
         parser.parse(args)
     }
 }
