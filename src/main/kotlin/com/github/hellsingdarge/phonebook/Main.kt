@@ -8,7 +8,9 @@ fun main(args: Array<String>)
             Department("Division 79", "456789132"),
             Department("Division 42", "321654897"),
             Department("SET", "753869421"),
-            Department("Dispatch", "159487263")
+            Department("Dispatch", "159487263"),
+            Department("ONIGRU", null)
+
     )
 
     val employees = listOf(
@@ -18,12 +20,6 @@ fun main(args: Array<String>)
     )
 
     if (argHandler.listAllDepartments != null)
-    {
-        println("Departments:")
-        departments.forEach { println(" * ${it.name}") }
-    }
-
-    if (argHandler.listAllDepartmentsInfo != null)
     {
         println("Departments and their phone numbers:")
         departments.forEach { println(" * $it") }

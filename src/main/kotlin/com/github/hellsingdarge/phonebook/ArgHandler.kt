@@ -11,13 +11,7 @@ class ArgHandler(val args: Array<String>)
     val listAllDepartments: Boolean? by parser.option(
             ArgType.Boolean,
             fullName = "listAllDepartments",
-            description = "List all registered departments' names"
-    )
-
-    val listAllDepartmentsInfo: Boolean? by parser.option(
-            ArgType.Boolean,
-            fullName = "listAllDepartmentsInfo",
-            description = "List name and phone number of each department"
+            description = "List all registered departments' names (if present)"
     )
 
     val listEmployeesInfo: Boolean? by parser.option(

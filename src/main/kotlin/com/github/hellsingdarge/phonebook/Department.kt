@@ -1,9 +1,10 @@
 package com.github.hellsingdarge.phonebook
 
-data class Department(val name: String, val phoneNumber: String)
+data class Department(val name: String, val phoneNumber: String?)
 {
     override fun toString(): String
     {
-        return "$name: $phoneNumber"
+        val number = if (phoneNumber != null) ": $phoneNumber" else ""
+        return "$name$number"
     }
 }
