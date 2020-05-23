@@ -13,6 +13,7 @@ fun main(args: Array<String>)
                     null
             )
             .load()
+//            .repair()
             .migrate()
 
     val app = Application()

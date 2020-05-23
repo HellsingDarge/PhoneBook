@@ -3,12 +3,15 @@ package com.github.hellsingdarge.phonebook.dao
 import com.github.hellsingdarge.phonebook.Department
 import com.github.hellsingdarge.phonebook.Employee
 import com.google.inject.Inject
+import mu.KotlinLogging
 import javax.sql.DataSource
 
 class EmployeeDAO
 {
     @Inject
     lateinit var connectionPool: DataSource
+
+    private val log = KotlinLogging.logger {}
 
     fun getEmployeesList(): List<Employee>
     {
@@ -44,6 +47,8 @@ class EmployeeDAO
 
     fun findEmployeeByPhoneNumber(phoneNumber: String): List<Employee>
     {
+        log.debug { "Trying to find employee by phone number: $phoneNumber" }
+
         val query = "SELECT * FROM Employees WHERE (externalNumber = ? OR internalNumber = ? OR homeNumber = ?)"
         val employees = mutableListOf<Employee>()
 
@@ -75,6 +80,8 @@ class EmployeeDAO
 
     fun addEmployee(name: String, departmentName: String, internalNumber: String?, externalNumber: String?, homeNumber: String?)
     {
+        log.debug { "Adding new employee. Name: $name, department: $departmentName" }
+
         val query = "INSERT INTO Employees VALUES(?, ?, ?, ?, ?)"
 
         connectionPool.connection.use { connection ->
@@ -92,14 +99,17 @@ class EmployeeDAO
         }
     }
 
-    fun changeName(newName: String)
+    fun changeName(oldName: String, newName: String)
     {
-        val query = "UPDATE Employees SET name = ?"
+        log.debug { "Changing name of an employee $oldName to $newName" }
+
+        val query = "UPDATE Employees SET name = ? WHERE name = ?"
 
         connectionPool.connection.use { connection ->
             val statement = connection.prepareStatement(query)
 
             statement.setString(1, newName)
+            statement.setString(2, oldName)
 
             statement.use {
                 it.executeUpdate()
@@ -107,8 +117,10 @@ class EmployeeDAO
         }
     }
 
-    fun changeDepartment(newDepartment: String)
+    fun changeDepartment(name: String, newDepartment: String)
     {
+        log.debug { "Changing internal name of $name to $newDepartment" }
+
         val query = "UPDATE Employees SET department = ?"
 
         connectionPool.connection.use { connection ->
@@ -122,8 +134,10 @@ class EmployeeDAO
         }
     }
 
-    fun changeInternalPhone(newPhone: String)
+    fun changeInternalPhone(name: String, newPhone: String)
     {
+        log.debug { "Changing internal name of $name to $newPhone" }
+
         val query = "UPDATE Employees SET internalPhone = ?"
 
         connectionPool.connection.use { connection ->
@@ -137,8 +151,10 @@ class EmployeeDAO
         }
     }
 
-    fun changeExternalPhone(newPhone: String)
+    fun changeExternalPhone(name: String, newPhone: String)
     {
+        log.debug { "Changing internal name of $name to $newPhone" }
+
         val query = "UPDATE Employees SET internalPhone = ?"
 
         connectionPool.connection.use { connection ->
@@ -152,8 +168,10 @@ class EmployeeDAO
         }
     }
 
-    fun changeHomePhone(newPhone: String)
+    fun changeHomePhone(name: String, newPhone: String)
     {
+        log.debug { "Changing internal name of $name to $newPhone" }
+
         val query = "UPDATE Employees SET homePhone = ?"
 
         connectionPool.connection.use { connection ->

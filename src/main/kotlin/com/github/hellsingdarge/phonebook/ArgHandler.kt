@@ -148,7 +148,7 @@ class ArgHandler(args: Array<String>, private val injector: Injector)
         {
             val employeeDAO = injector.getInstance(EmployeeDAO::class.java)
             val employeeService = EmployeeService(employeeDAO)
-            employeeService.change(whatToChange, newValue)
+            employeeService.change(name, whatToChange, newValue)
         }
     }
 

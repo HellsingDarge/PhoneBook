@@ -5,12 +5,17 @@ import com.github.hellsingdarge.phonebook.dao.EmployeeDAO
 import com.github.hellsingdarge.phonebook.guicemodules.ConnectionPoolModule
 import com.google.inject.Guice
 import kotlinx.cli.ExperimentalCli
+import mu.KotlinLogging
 
 @ExperimentalCli
 class Application
 {
+    private val log = KotlinLogging.logger {}
+
     fun run(args: Array<String>)
     {
+        log.debug { "Passed arguments: ${args.joinToString(",")}" }
+
         val injector = Guice.createInjector(ConnectionPoolModule())
         val argHandler = ArgHandler(args, injector)
 

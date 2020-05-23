@@ -2,12 +2,15 @@ package com.github.hellsingdarge.phonebook.dao
 
 import com.github.hellsingdarge.phonebook.Department
 import com.google.inject.Inject
+import mu.KotlinLogging
 import javax.sql.DataSource
 
 class DepartmentDAO
 {
     @Inject
     lateinit var connectionPool: DataSource
+
+    private val log = KotlinLogging.logger {}
 
     fun getAllDepartments(): List<Department>
     {
@@ -37,6 +40,8 @@ class DepartmentDAO
 
     fun findDepartmentByPhoneNumber(phoneNumber: String): Department?
     {
+        log.debug { "Trying to find department by phone number: $phoneNumber" }
+
         val query = "SELECT name FROM Departments WHERE phoneNumber = ?"
         var department: Department? = null
 
@@ -61,6 +66,8 @@ class DepartmentDAO
 
     fun addDepartment(name: String, phoneNumber: String?)
     {
+        log.debug { "Adding new department $name with phone number $phoneNumber" }
+
         val query = "INSERT INTO Departments VALUES(?, ?)"
 
         connectionPool.connection.use { connection ->
@@ -77,6 +84,8 @@ class DepartmentDAO
 
     fun changeName(oldName: String, newName: String)
     {
+        log.debug { "Changing name of $oldName to $newName" }
+
         val query = "UPDATE Departments SET name = ? WHERE name = ?"
 
         connectionPool.connection.use { connection ->
@@ -93,6 +102,8 @@ class DepartmentDAO
 
     fun changePhoneNumber(department: String, newPhoneNumber: String)
     {
+        log.debug { "Changing phone number of $department to $newPhoneNumber" }
+
         val query = "UPDATE Departments SET phoneNumber = ? WHERE name = ?"
 
         connectionPool.connection.use { connection ->

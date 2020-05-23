@@ -35,24 +35,24 @@ class EmployeeService @Inject constructor(private val employeeDAO: EmployeeDAO)
         }
     }
 
-    fun change(whatToChange: String, newValue: String)
+    fun change(name: String, whatToChange: String, newValue: String)
     {
         when (whatToChange)
         {
-            "name" -> employeeDAO.changeName(newValue)
+            "name" -> employeeDAO.changeName(name, newValue)
             "department" ->
                 try
                 {
-                    employeeDAO.changeDepartment(newValue)
+                    employeeDAO.changeDepartment(name, newValue)
                 }
                 catch (ex: SQLIntegrityConstraintViolationException)
                 {
                     println("Can't change department to know which doesn't exist")
                 }
 
-            "internal" -> employeeDAO.changeInternalPhone(newValue)
-            "external" -> employeeDAO.changeExternalPhone(newValue)
-            "home" -> employeeDAO.changeHomePhone(newValue)
+            "internal" -> employeeDAO.changeInternalPhone(name, newValue)
+            "external" -> employeeDAO.changeExternalPhone(name, newValue)
+            "home" -> employeeDAO.changeHomePhone(name, newValue)
         }
     }
 }
