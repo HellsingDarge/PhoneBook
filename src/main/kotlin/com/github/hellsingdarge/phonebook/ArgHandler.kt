@@ -1,15 +1,12 @@
 package com.github.hellsingdarge.phonebook
 
 import com.github.hellsingdarge.phonebook.dao.EmployeeDAO
+import com.google.inject.Injector
 import kotlinx.cli.*
-import java.lang.IllegalStateException
-import java.sql.DriverManager
-import java.sql.SQLIntegrityConstraintViolationException
 
 @ExperimentalCli
-class ArgHandler(val args: Array<String>)
+class ArgHandler(args: Array<String>, injector: Injector)
 {
-    val addEmployee = AddEmployee()
     private val parser = ArgParser("PhoneBook.jar", true)
 
     val listAllDepartments: Boolean? by parser.option(
@@ -24,7 +21,7 @@ class ArgHandler(val args: Array<String>)
             description = "List name and departments of the employee. Optionally also lists internal, extranal and home phone numbers"
     )
 
-    class AddEmployee : Subcommand("addEmployee", "Add employee. Leavy argument blank to give no value")
+    class AddEmployee(private val injector: Injector) : Subcommand("addEmployee", "Add employee")
     {
         val employeeName: String by argument(
                 ArgType.String,
@@ -40,41 +37,62 @@ class ArgHandler(val args: Array<String>)
 
         val internalNumber: String? by option(
                 ArgType.String,
-                shortName = "internalNumber",
+                shortName = "int",
+                fullName = "internalNumber",
                 description = "Internal phone number"
         )
 
         val externalNumber: String? by option(
                 ArgType.String,
-                shortName = "externalName",
+                shortName = "ext",
+                fullName = "externalNumber",
                 description = "External phone number"
         )
 
         val homeNumber: String? by option(
                 ArgType.String,
-                shortName = "homeNumber",
+                shortName = "home",
+                fullName = "homeNumber",
                 description = "Home phone number"
         )
 
         override fun execute()
         {
-            DriverManager.getConnection("jdbc:h2:./PhoneBook", "sa", null).use {
-                val employeeDAO = EmployeeDAO(it)
-                try
-                {
-                    employeeDAO.addEmployee(employeeName, department, internalNumber, externalNumber, homeNumber)
-                }
-                catch (ex: SQLIntegrityConstraintViolationException)
-                {
-                    println("Tried to add employee to non existing department. Depeartment: $department")
-                }
+            val employeeDAO = injector.getInstance(EmployeeDAO::class.java)
+
+            if (!employeeDAO.addEmployee(employeeName, department, internalNumber, externalNumber, homeNumber))
+            {
+                println("Mayn't add employee that already exists")
+                kotlin.system.exitProcess(1);
             }
+        }
+    }
+
+    class Find : Subcommand("find", "find employee/department by phone number")
+    {
+        val target: String by argument(
+                ArgType.Choice(listOf("employee", "department")),
+                fullName = "target",
+                description = "What to search"
+        )
+
+        val phoneNumber: String by argument(
+                ArgType.String,
+                fullName = "phoneNumber",
+                description = "Search target with this phone number. Be it internal, external or home one"
+        )
+
+        override fun execute()
+        {
+            TODO("Not yet implemented")
         }
     }
 
     init
     {
-        parser.subcommands(addEmployee)
+        val addEmployee = AddEmployee(injector)
+        val find = Find()
+        parser.subcommands(addEmployee, find)
         parser.parse(args)
     }
 }

@@ -1,16 +1,20 @@
 package com.github.hellsingdarge.phonebook.dao
 
 import com.github.hellsingdarge.phonebook.Department
-import java.sql.Connection
+import com.google.inject.Inject
+import javax.sql.DataSource
 
-class DepartmentDAO(private val dbConnection: Connection)
+class DepartmentDAO
 {
+    @Inject
+    lateinit var connectionPool: DataSource
+
     fun getAllDepartments(): List<Department>
     {
         val query = "SELECT * FROM Departments"
         val departments = mutableListOf<Department>()
 
-        dbConnection.use { connection ->
+        connectionPool.connection.use { connection ->
             val statement = connection.createStatement()
 
             statement.use {

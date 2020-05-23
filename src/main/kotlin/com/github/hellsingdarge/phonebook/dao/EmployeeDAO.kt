@@ -2,16 +2,21 @@ package com.github.hellsingdarge.phonebook.dao
 
 import com.github.hellsingdarge.phonebook.Department
 import com.github.hellsingdarge.phonebook.Employee
-import java.sql.Connection
+import com.google.inject.Inject
+import java.sql.SQLIntegrityConstraintViolationException
+import javax.sql.DataSource
 
-class EmployeeDAO(private val dbConnection: Connection)
+class EmployeeDAO
 {
+    @Inject
+    lateinit var connectionPool: DataSource
+
     fun getEmployeesList(): List<Employee>
     {
         val query = "SELECT Employees.*, Departments.phoneNumber as DepartmentPhoneNumber FROM Employees INNER JOIN Departments ON Employees.department = Departments.name"
         val employees = mutableListOf<Employee>()
 
-        dbConnection.use { connection ->
+        connectionPool.connection.use { connection ->
             val statement = connection.createStatement()
 
             statement.use {
@@ -38,22 +43,31 @@ class EmployeeDAO(private val dbConnection: Connection)
         return employees.toList()
     }
 
-    fun addEmployee(name: String, departmentName: String, internalNumber: String?, externalNumber: String?, homeNumber: String?)
+    fun addEmployee(name: String, departmentName: String, internalNumber: String?, externalNumber: String?, homeNumber: String?): Boolean
     {
         val query = "INSERT INTO Employees VALUES(?, ?, ?, ?, ?)"
 
-        dbConnection.use { connection ->
-            val statement = connection.prepareStatement(query)
+        try
+        {
+            connectionPool.connection.use { connection ->
+                val statement = connection.prepareStatement(query)
 
-            statement.use {
-                it.setString(1, name)
-                it.setString(2, departmentName)
-                it.setString(3, externalNumber)
-                it.setString(4, internalNumber)
-                it.setString(5, homeNumber)
+                statement.use {
+                    it.setString(1, name)
+                    it.setString(2, departmentName)
+                    it.setString(3, externalNumber)
+                    it.setString(4, internalNumber)
+                    it.setString(5, homeNumber)
 
-                it.execute()
+                    it.executeUpdate()
+                }
             }
+
+            return true
+        }
+        catch (eg: SQLIntegrityConstraintViolationException)
+        {
+            return false
         }
     }
 }
