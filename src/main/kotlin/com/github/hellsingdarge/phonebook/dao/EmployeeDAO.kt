@@ -38,8 +38,22 @@ class EmployeeDAO(private val dbConnection: Connection)
         return employees.toList()
     }
 
-    fun addEmployee(employee: Employee)
+    fun addEmployee(name: String, departmentName: String, internalNumber: String?, externalNumber: String?, homeNumber: String?)
     {
+        val query = "INSERT INTO Employees VALUES(?, ?, ?, ?, ?)"
 
+        dbConnection.use { connection ->
+            val statement = connection.prepareStatement(query)
+
+            statement.use {
+                it.setString(1, name)
+                it.setString(2, departmentName)
+                it.setString(3, externalNumber)
+                it.setString(4, internalNumber)
+                it.setString(5, homeNumber)
+
+                it.execute()
+            }
+        }
     }
 }
