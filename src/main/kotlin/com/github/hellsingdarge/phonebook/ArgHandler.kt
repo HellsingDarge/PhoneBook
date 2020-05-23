@@ -38,23 +38,23 @@ class ArgHandler(val args: Array<String>)
                 description = "Name of the department. No spaces (\"Devision 72 \" -> \"Devision72\")"
         )
 
-        val internalNumber: String? by argument(
+        val internalNumber: String? by option(
                 ArgType.String,
-                fullName = "internalNumber",
+                shortName = "internalNumber",
                 description = "Internal phone number"
-        ).optional()
+        )
 
-        val externalNumber: String? by argument(
+        val externalNumber: String? by option(
                 ArgType.String,
-                fullName = "externalName",
+                shortName = "externalName",
                 description = "External phone number"
-        ).optional()
+        )
 
-        val homeNumber: String? by argument(
+        val homeNumber: String? by option(
                 ArgType.String,
-                fullName = "homeNumber",
+                shortName = "homeNumber",
                 description = "Home phone number"
-        ).optional()
+        )
 
         override fun execute()
         {
