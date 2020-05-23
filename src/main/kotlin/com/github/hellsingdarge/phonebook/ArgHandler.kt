@@ -1,11 +1,12 @@
 package com.github.hellsingdarge.phonebook
 
+import com.github.hellsingdarge.phonebook.dao.DepartmentDAO
 import com.github.hellsingdarge.phonebook.dao.EmployeeDAO
 import com.google.inject.Injector
 import kotlinx.cli.*
 
 @ExperimentalCli
-class ArgHandler(args: Array<String>, injector: Injector)
+class ArgHandler(args: Array<String>, private val injector: Injector)
 {
     private val parser = ArgParser("PhoneBook.jar", true)
 
@@ -21,7 +22,7 @@ class ArgHandler(args: Array<String>, injector: Injector)
             description = "List name and departments of the employee. Optionally also lists internal, extranal and home phone numbers"
     )
 
-    class AddEmployee(private val injector: Injector) : Subcommand("addEmployee", "Add employee")
+    inner class AddEmployee : Subcommand("addEmployee", "Add employee")
     {
         val employeeName: String by argument(
                 ArgType.String,
@@ -60,7 +61,11 @@ class ArgHandler(args: Array<String>, injector: Injector)
         {
             val employeeDAO = injector.getInstance(EmployeeDAO::class.java)
 
-            if (!employeeDAO.addEmployee(employeeName, department, internalNumber, externalNumber, homeNumber))
+            if (employeeDAO.addEmployee(employeeName, department, internalNumber, externalNumber, homeNumber))
+            {
+                println("Successfuly added empployee $employeeName")
+            }
+            else
             {
                 println("Mayn't add employee that already exists")
                 kotlin.system.exitProcess(1);
@@ -68,7 +73,7 @@ class ArgHandler(args: Array<String>, injector: Injector)
         }
     }
 
-    class Find : Subcommand("find", "find employee/department by phone number")
+    inner class Find : Subcommand("find", "find employee/department by phone number")
     {
         val target: String by argument(
                 ArgType.Choice(listOf("employee", "department")),
@@ -84,13 +89,46 @@ class ArgHandler(args: Array<String>, injector: Injector)
 
         override fun execute()
         {
-            TODO("Not yet implemented")
+            when (target)
+            {
+                "employee" ->
+                {
+                    val employeeDAO = injector.getInstance(EmployeeDAO::class.java)
+                    val employees = employeeDAO.findEmployeeByPhoneNumber(phoneNumber)
+
+                    if (employees.isEmpty())
+                    {
+                        println("No employees found with this phone number: $phoneNumber")
+                    }
+                    else
+                    {
+                        employees.forEach {
+                            println(it.fancyPrint())
+                        }
+                    }
+                }
+
+                "department" ->
+                {
+                    val departmentDAO = injector.getInstance(DepartmentDAO::class.java)
+                    val department = departmentDAO.findDepartmentByPhoneNumber(phoneNumber)
+
+                    if (department == null)
+                    {
+                        println("No department found with this phone number: $phoneNumber")
+                    }
+                    else
+                    {
+                        println(department.fancyPrint())
+                    }
+                }
+            }
         }
     }
 
     init
     {
-        val addEmployee = AddEmployee(injector)
+        val addEmployee = AddEmployee()
         val find = Find()
         parser.subcommands(addEmployee, find)
         parser.parse(args)

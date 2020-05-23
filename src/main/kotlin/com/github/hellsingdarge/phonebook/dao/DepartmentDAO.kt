@@ -34,4 +34,28 @@ class DepartmentDAO
 
         return departments.toList()
     }
+
+    fun findDepartmentByPhoneNumber(phoneNumber: String): Department?
+    {
+        val query = "SELECT name FROM Departments WHERE phoneNumber = ?"
+        var department: Department? = null
+
+        connectionPool.connection.use { connection ->
+            val statement = connection.prepareStatement(query)
+
+            statement.setString(1, phoneNumber)
+
+            statement.use {
+
+                val result = statement.executeQuery()
+
+                if (result.next())
+                {
+                    department = Department(result.getString("name"), phoneNumber)
+                }
+            }
+        }
+
+        return department
+    }
 }

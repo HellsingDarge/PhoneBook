@@ -43,6 +43,37 @@ class EmployeeDAO
         return employees.toList()
     }
 
+    fun findEmployeeByPhoneNumber(phoneNumber: String): List<Employee>
+    {
+        val query = "SELECT * FROM Employees WHERE (externalNumber = ? OR internalNumber = ? OR homeNumber = ?)"
+        val employees = mutableListOf<Employee>()
+
+        connectionPool.connection.use { connection ->
+            val statement = connection.prepareStatement(query)
+
+            (1..3).forEach { statement.setString(it, phoneNumber) }
+
+            statement.use {
+                val result = it.executeQuery()
+
+                while (result.next())
+                {
+                    employees.add(
+                            Employee(
+                                    result.getString("name"),
+                                    Department(result.getString("department"), null),
+                                    result.getString("internalNumber"),
+                                    result.getString("externalNumber"),
+                                    result.getString("homeNumber")
+                            )
+                    )
+                }
+            }
+        }
+
+        return employees.toList()
+    }
+
     fun addEmployee(name: String, departmentName: String, internalNumber: String?, externalNumber: String?, homeNumber: String?): Boolean
     {
         val query = "INSERT INTO Employees VALUES(?, ?, ?, ?, ?)"
@@ -52,13 +83,13 @@ class EmployeeDAO
             connectionPool.connection.use { connection ->
                 val statement = connection.prepareStatement(query)
 
-                statement.use {
-                    it.setString(1, name)
-                    it.setString(2, departmentName)
-                    it.setString(3, externalNumber)
-                    it.setString(4, internalNumber)
-                    it.setString(5, homeNumber)
+                statement.setString(1, name)
+                statement.setString(2, departmentName)
+                statement.setString(3, externalNumber)
+                statement.setString(4, internalNumber)
+                statement.setString(5, homeNumber)
 
+                statement.use {
                     it.executeUpdate()
                 }
             }
