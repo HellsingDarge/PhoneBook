@@ -24,7 +24,7 @@ class Application
             val departmentsDAO = injector.getInstance(DepartmentDAO::class.java)
 
             log.info { "Departments and their phone number (if present)" }
-            departmentsDAO.getAllDepartments().forEach { println("* ${it.fancyPrint()}") }
+            departmentsDAO.getAllDepartments().forEach { log.info { "* ${it.fancyPrint()}" } }
         }
 
         if (argHandler.listEmployeesInfo != null)
@@ -32,7 +32,7 @@ class Application
             val employeeDAO = injector.getInstance(EmployeeDAO::class.java)
 
             log.info { "Employees and their department and phone numbers" }
-            employeeDAO.getEmployeesList().forEach { println(it.fancyPrint()) }
+            employeeDAO.getEmployeesList().forEach { log.info { it.fancyPrint() } }
         }
     }
 }
