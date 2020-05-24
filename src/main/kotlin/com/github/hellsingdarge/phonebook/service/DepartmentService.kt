@@ -1,20 +1,23 @@
 package com.github.hellsingdarge.phonebook.service
 
 import com.github.hellsingdarge.phonebook.dao.DepartmentDAO
+import mu.KotlinLogging
 
 class DepartmentService(private val departmentDAO: DepartmentDAO)
 {
+    private val log = KotlinLogging.logger {}
+
     fun findDepartmentByPhoneNumber(phoneNumber: String)
     {
         val department = departmentDAO.findDepartmentByPhoneNumber(phoneNumber)
 
         if (department == null)
         {
-            println("No department found with this phone number: $phoneNumber")
+            log.info { "No department found with this phone number: $phoneNumber" }
         }
         else
         {
-            println(department.fancyPrint())
+            log.info { department.fancyPrint() }
         }
     }
 

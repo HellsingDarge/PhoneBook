@@ -2,20 +2,23 @@ package com.github.hellsingdarge.phonebook.service
 
 import com.github.hellsingdarge.phonebook.dao.EmployeeDAO
 import com.google.inject.Inject
+import mu.KotlinLogging
 import java.sql.SQLIntegrityConstraintViolationException
 
 class EmployeeService @Inject constructor(private val employeeDAO: EmployeeDAO)
 {
+    private val log = KotlinLogging.logger {}
+
     fun addEmployee(name: String, departmentName: String, internalNumber: String?, externalNumber: String?, homeNumber: String?)
     {
         try
         {
             employeeDAO.addEmployee(name, departmentName, internalNumber, externalNumber, homeNumber)
-            println("Successfully added new employee: $name")
+            log.info { "Successfully added new employee: $name" }
         }
         catch (ex: SQLIntegrityConstraintViolationException)
         {
-            println("Can't add employee that's already registered. Employee name: $name")
+            log.error { "Can't add employee that's already registered. Employee name: $name" }
         }
     }
 
@@ -25,12 +28,12 @@ class EmployeeService @Inject constructor(private val employeeDAO: EmployeeDAO)
 
         if (employees.isEmpty())
         {
-            println("No employees found with this phone number: $phoneNumber")
+            log.info { "No employees found with this phone number: $phoneNumber" }
         }
         else
         {
             employees.forEach {
-                println(it.fancyPrint())
+                log.info { it.fancyPrint() }
             }
         }
     }
@@ -47,7 +50,7 @@ class EmployeeService @Inject constructor(private val employeeDAO: EmployeeDAO)
                 }
                 catch (ex: SQLIntegrityConstraintViolationException)
                 {
-                    println("Can't change department to know which doesn't exist")
+                    log.error { "Can't change name of a department that doesn't exist" }
                 }
 
             "internal" -> employeeDAO.changeInternalPhone(name, newValue)
