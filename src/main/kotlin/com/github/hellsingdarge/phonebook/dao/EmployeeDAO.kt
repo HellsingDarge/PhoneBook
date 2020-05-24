@@ -121,12 +121,13 @@ class EmployeeDAO
     {
         log.debug { "Changing internal name of $name to $newDepartment" }
 
-        val query = "UPDATE Employees SET department = ?"
+        val query = "UPDATE Employees SET department = ? WHERE name = ?"
 
         connectionPool.connection.use { connection ->
             val statement = connection.prepareStatement(query)
 
             statement.setString(1, newDepartment)
+            statement.setString(2, name)
 
             statement.use {
                 it.executeUpdate()
@@ -138,12 +139,13 @@ class EmployeeDAO
     {
         log.debug { "Changing internal name of $name to $newPhone" }
 
-        val query = "UPDATE Employees SET internalPhone = ?"
+        val query = "UPDATE Employees SET internalPhone = ? WHERE name = ?"
 
         connectionPool.connection.use { connection ->
             val statement = connection.prepareStatement(query)
 
             statement.setString(1, newPhone)
+            statement.setString(2, name)
 
             statement.use {
                 it.executeUpdate()
@@ -155,12 +157,13 @@ class EmployeeDAO
     {
         log.debug { "Changing internal name of $name to $newPhone" }
 
-        val query = "UPDATE Employees SET internalPhone = ?"
+        val query = "UPDATE Employees SET internalPhone = ? WHERE name = ?"
 
         connectionPool.connection.use { connection ->
             val statement = connection.prepareStatement(query)
 
             statement.setString(1, newPhone)
+            statement.setString(2, name)
 
             statement.use {
                 it.executeUpdate()
@@ -172,12 +175,13 @@ class EmployeeDAO
     {
         log.debug { "Changing internal name of $name to $newPhone" }
 
-        val query = "UPDATE Employees SET homePhone = ?"
+        val query = "UPDATE Employees SET homePhone = ? WHERE name = ?"
 
         connectionPool.connection.use { connection ->
             val statement = connection.prepareStatement(query)
 
             statement.setString(1, newPhone)
+            statement.setString(2, name)
 
             statement.use {
                 it.executeUpdate()
