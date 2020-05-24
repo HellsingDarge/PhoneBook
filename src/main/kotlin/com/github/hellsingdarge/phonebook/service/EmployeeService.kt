@@ -18,7 +18,10 @@ class EmployeeService @Inject constructor(private val employeeDAO: EmployeeDAO)
         }
         catch (ex: SQLIntegrityConstraintViolationException)
         {
-            log.error { "Can't add employee that's already registered. Employee name: $name" }
+            log.error {
+                "Can't add employee that's already registered. Employee name: $name\n" +
+                        "Can't add employee to non existing department: $departmentName"
+            }
         }
     }
 
